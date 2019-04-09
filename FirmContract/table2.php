@@ -3,7 +3,14 @@
 
 	function get_contracts(){
 		include ("db.php");
-		$result=mysqli_query($db,"SELECT * FROM contract");
+		if(isset($_POST["contract_from"]) && isset($_POST["contract_to"])){
+			$contract_from = $_POST["contract_from"];
+			$contract_to = $_POST["contract_to"];
+			$result = mysqli_query($db, "SELECT id_c, name, numberd, named, sumd, datastart, datafinish, avans FROM contract INNER JOIN firm on(contract.id_firm = firm.id_firm) WHERE datastart BETWEEN '$contract_from' and '$contract_to'");
+		}
+		else{
+			$result=mysqli_query($db,"SELECT id_c, name, numberd, named, sumd, datastart, datafinish, avans FROM contract INNER JOIN firm on(contract.id_firm = firm.id_firm)");
+		}
 		$contracts=array();
 		while($object=mysqli_fetch_object($result))
 		{
@@ -35,7 +42,7 @@
 		$contracts=get_contracts();
 		foreach ($contracts as $contracts) {
     			$table_str.='<tr>';
-    			$table_str.='<td>'.$contracts->id_c.'</td><td>'.$contracts->id_firm.'</td><td>'.$contracts->numberd.'</td><td>'.$contracts->named.'</td><td>'.$contracts->sumd.'</td>
+    			$table_str.='<td>'.$contracts->id_c.'</td><td>'.$contracts->name.'</td><td>'.$contracts->numberd.'</td><td>'.$contracts->named.'</td><td>'.$contracts->sumd.'</td>
 					<td>'.$contracts->datastart.'</td><td>'.$contracts->datafinish.'</td><td>'.$contracts->avans.'</td>';
     			$table_str.='</tr>';
 		}
